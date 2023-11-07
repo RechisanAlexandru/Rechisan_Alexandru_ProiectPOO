@@ -54,15 +54,27 @@ public:
 				this->blocuri[i] = cartier.blocuri[i];
 			return *this;
 		}
-
 	}
+	Cartier operator+(const Cartier& cartier) {
+		Cartier aux;
+		aux.nume = this->nume;
+		aux.locuitori = this->locuitori + cartier.locuitori;
+		aux.nrBlocuri = this->nrBlocuri;
+		if (aux.blocuri != NULL)
+			delete[] aux.blocuri;
+		aux.blocuri = new string[aux.nrBlocuri];
+		for (int i = 0; i < this->nrBlocuri; i++)
+			aux.blocuri[i] = this->blocuri[i];
+		return aux;
+	}
+	
 	~Cartier() {
 		if (this->blocuri != NULL)
 			delete[]this->blocuri;
 	}
 
 	void afisare() {
-		cout << "Cartierul " << this->nume << " se afla in orasul " << this->oras << " are " << this->locuitori
+		cout << "Cartierul " << this->nume <<" cu numarul "<< this->nrCartier<< " se afla in orasul " << this->oras << " are " << this->locuitori
 			<< " locuitori" << " ce locuiesc in " << this->nrBlocuri << " blocuri ce sunt denumite astfel:\n";
 		for (int i = 0; i < this->nrBlocuri; i++) {
 			cout << this->blocuri[i];
@@ -122,9 +134,39 @@ public:
 		return straziAsfaltate;
 	}
 	friend int adunaLocuitori(Cartier, int);
+	friend ostream& operator<<(ostream& out, const Cartier& cartier);
+	friend istream& operator>>(istream& in, Cartier& cartier) {
+		cout << "Nume: ";
+		in >> cartier.nume;
+		cout << "\nLocuitori: ";
+		in >> cartier.locuitori;
+		cout << "\nNumar blocuri: ";
+		in >> cartier.nrBlocuri;
+		if (cartier.blocuri != NULL) {
+			delete[]cartier.blocuri;
+		}
+		cartier.blocuri = new string[cartier.nrBlocuri];
+		for (int i = 0; i < cartier.nrBlocuri; i++) {
+			cout << "Blocul " << i + 1 << ": ";
+			in >> cartier.blocuri[i];
+		}
+		return in;
+	}
 };
 string Cartier::oras = "Mangalia";
 int Cartier::straziAsfaltate = 0;
+ostream& operator<<(ostream& out, const Cartier& cartier)
+{
+	out << "Cartierul " << cartier.nume << " are numarul " << cartier.nrCartier << ", se afla in orasul " << cartier.oras << ", are " <<
+		cartier.locuitori << " locuitori impartiti in " << cartier.nrBlocuri << " blocuri. Blocurile sunt: ";
+	if (cartier.nrBlocuri == 0)
+		out << "-";
+	else
+		for (int i = 0; i < cartier.nrBlocuri; i++)
+			out << cartier.blocuri[i] << " ";
+	out << endl;
+	return out;
+}
 
 int adunaLocuitori(Cartier c, int numarAdunat) {
 	c.locuitori += numarAdunat;
@@ -163,8 +205,8 @@ public:
 		this->terenJoaca = NULL;
 	}
 	void afisare() {
-		cout << "Parcul " << this->nume << "din orasul " << this->oras << " are zilnic " << this->vizitatori << " de vizitatori"
-			<< ", are un numar de " << this->nrTerenJoaca << " tipuri de terenuri de joaca, acestea fiind de: " << endl;
+		cout << "Parcul " << this->nume << " cu numarul "<<this->nrParc<< " din orasul " << this->oras << " are zilnic " << this->vizitatori << " de vizitatori"
+			<< ", are un numar de " << this->nrTerenJoaca << " terenuri de joaca, acestea fiind de: " << endl;
 		if (nrTerenJoaca != 0 && terenJoaca != NULL) {
 			for (int i = 0; i < this->nrTerenJoaca; i++) {
 				cout << terenJoaca[i];
@@ -196,6 +238,18 @@ public:
 			return *this;
 		}
 
+	}
+	Parc operator+( Parc& parc) {
+		Parc aux;
+		aux.nume = this->nume;
+		aux.vizitatori = this->vizitatori + parc.vizitatori;
+		aux.nrTerenJoaca = this->nrTerenJoaca;
+		if (aux.terenJoaca != NULL)
+			delete[] aux.terenJoaca;
+		aux.terenJoaca = new string[aux.nrTerenJoaca];
+		for (int i = 0; i < this->nrTerenJoaca; i++)
+			aux.terenJoaca[i] = this->terenJoaca[i];
+		return aux;
 	}
 	~Parc() {
 		if (this->terenJoaca != NULL)
@@ -239,19 +293,49 @@ public:
 	}
 	void addNouTeren(string teren) {
 
-		string* aux = new string[this->nrTerenJoaca + 1];
+		string* a = new string[this->nrTerenJoaca + 1];
 		for (int i = 0; i < this->nrTerenJoaca; i++)
-			aux[i] = this->terenJoaca[i];
-		aux[this->nrTerenJoaca] = teren;
+			a[i] = this->terenJoaca[i];
+		a[this->nrTerenJoaca] = teren;
 
 		delete[]this->terenJoaca;
-		this->terenJoaca = aux;
+		this->terenJoaca = a;
 
 		this->nrTerenJoaca++;
 
 	}
+	friend ostream& operator<<(ostream& out, const Parc& parc);
+	friend istream& operator>>(istream& in, Parc& parc) {
+		cout << "Nume: ";
+		in >> parc.nume;
+		cout << "\nVizitatori: ";
+		in >> parc.vizitatori;
+		cout << "\nNumar terenuri joaca: ";
+		in >> parc.nrTerenJoaca;
+		if (parc.terenJoaca != NULL) {
+			delete[]parc.terenJoaca;
+		}
+		parc.terenJoaca = new string[parc.nrTerenJoaca];
+		for (int i = 0; i < parc.nrTerenJoaca; i++) {
+			cout << "Terenul de joaca " << i + 1 << ": ";
+			in >> parc.terenJoaca[i];
+		}
+		return in;
+	}
 };
 string Parc::oras = "Mangalia";
+ostream& operator<<(ostream& out, const Parc& parc)
+{
+	out << "Parcul " << parc.nume << " are numarul " << parc.nrParc << ", se afla in orasul " << parc.oras << ", are " <<
+		parc.vizitatori << " vizitatori zilnic. Are " << parc.nrTerenJoaca << " terenuri de joaca, acestea fiind de :";
+	if (parc.nrTerenJoaca == 0)
+		out << " -";
+	else
+		for (int i = 0; i < parc.nrTerenJoaca; i++)
+			out << parc.terenJoaca[i] << " ";
+	out << endl;
+	return out;
+}
 
 class Scoala {
 private:
@@ -321,6 +405,18 @@ public:
 		}
 
 	}
+	Scoala operator+(Scoala& scoala) {
+		Scoala aux;
+		aux.nume = this->nume;
+		aux.elevi = this->elevi + scoala.elevi;
+		aux.nrSaliSpeciale = this->nrSaliSpeciale;
+		if (aux.saliSpeciale != NULL)
+			delete[] aux.saliSpeciale;
+		aux.saliSpeciale = new string[aux.nrSaliSpeciale];
+		for (int i = 0; i < this->nrSaliSpeciale; i++)
+			aux.saliSpeciale[i] = this->saliSpeciale[i];
+		return aux;
+	}
 	static void setOras(string oras) {
 		Scoala::oras = oras;
 	}
@@ -359,20 +455,50 @@ public:
 	}
 	void addSalaSpeciala(string sali) {
 
-		string* aux = new string[this->nrSaliSpeciale + 1];
+		string* au = new string[this->nrSaliSpeciale + 1];
 		for (int i = 0; i < this->nrSaliSpeciale; i++)
-			aux[i] = this->saliSpeciale[i];
-		aux[this->nrSaliSpeciale] = sali;
+			au[i] = this->saliSpeciale[i];
+		au[this->nrSaliSpeciale] = sali;
 
 		delete[]this->saliSpeciale;
-		this->saliSpeciale = aux;
+		this->saliSpeciale = au;
 
 		this->nrSaliSpeciale++;
 
 	}
 	friend int plecareElevi(Scoala, int);
+	friend ostream& operator<<(ostream& out, const Scoala& scoala);
+	friend istream& operator>>(istream& in, Scoala& scoala) {
+		cout << "Nume: ";
+		in >> scoala.nume;
+		cout << "\nElevi: ";
+		in >> scoala.elevi;
+		cout << "\nNumar sali speciale: ";
+		in >> scoala.nrSaliSpeciale;
+		if (scoala.saliSpeciale != NULL) {
+			delete[]scoala.saliSpeciale;
+		}
+		scoala.saliSpeciale = new string[scoala.nrSaliSpeciale];
+		for (int i = 0; i < scoala.nrSaliSpeciale; i++) {
+			cout << "Sala speciala " << i + 1 << ": ";
+			in >> scoala.saliSpeciale[i];
+		}
+		return in;
+	}
 };
 string Scoala::oras = "Mangalia";
+ostream& operator<<(ostream& out, const Scoala& scoala)
+{
+	out << "Scoala " << scoala.nume << " are numarul " << scoala.nrScoala << ", se afla in orasul " << scoala.oras << ", are " <<
+		scoala.elevi << " elevi. Are " << scoala.nrSaliSpeciale << " sali speciale, acestea fiind de :";
+	if (scoala.nrSaliSpeciale == 0)
+		out << " -";
+	else
+		for (int i = 0; i < scoala.nrSaliSpeciale; i++)
+			out << scoala.saliSpeciale[i] << " ";
+	out << endl;
+	return out;
+}
 int plecareElevi(Scoala s, int eleviPlecati) {
 	s.elevi -= eleviPlecati;
 	return s.elevi;
@@ -418,6 +544,7 @@ int main()
 	cartier4.afisare(); 
 	cout << endl;
 
+
 	Cartier cartier5;
 	cartier5.setLocuitori(100);
 	cartier5.afisare();
@@ -425,6 +552,22 @@ int main()
 	int locuitoriDupaAdunare = adunaLocuitori(cartier5, numarAdunat);
 	cout << "Dupa venirea a " << numarAdunat << " locuitori, cartierul are " << locuitoriDupaAdunare << " locuitori." << endl;
 
+	cout << endl;
+	Cartier cartier6;
+	cartier6 = cartier3;
+	cartier6.afisare();
+	cout << endl;
+	
+	cout << endl;
+	cout << cartier2 << endl;
+	cin >> cartier2;
+	cout << cartier2;
+	cout << endl;
+
+	cout << endl;
+	Cartier cartier7;
+	cartier7 = cartier3 + cartier3;
+	cout << cartier7;
 
 	cout << endl;
 	Parc parc1;
@@ -437,7 +580,7 @@ int main()
 	parc2.afisare();
 	cout << endl;
 
-	Parc parc3("Magicieni ", 3000, 3, 4);
+	Parc parc3("Magicieni ", 3000, 3, 0);
 	Parc::setOras("Bucuresti");
 	parc3.afisare();
 	cout << endl;
@@ -456,6 +599,20 @@ int main()
 	cout << endl;
 	parc4.afisare();
 
+	Parc parc5;
+	parc5 = parc3;
+	parc5.afisare();
+
+	cout << endl;
+	cout << parc2 << endl;
+	cin >> parc2;
+	cout << parc2;
+	cout << endl;
+
+	cout << endl;
+	Parc parc7;
+	parc7 = parc3 + parc3;
+	cout<<parc7;
 
 	cout << endl;
 	Scoala scoala1;
@@ -495,4 +652,18 @@ int main()
 	int eleviDupaPlecare = plecareElevi(scoala5, eleviPlecati);
 	cout << "Dupa plecarea a " << eleviPlecati << " elevi, scoala a ramas cu " << eleviDupaPlecare << " elevi " << endl;
 
+	Scoala scoala6;
+	scoala6 = scoala3;
+	scoala6.afisare();
+
+	cout << endl;
+	cout << scoala2 << endl;
+	cin >> scoala2;
+	cout << scoala2;
+	cout << endl;
+
+	cout << endl;
+	Scoala scoala7;
+	scoala7 = scoala3 + scoala3;
+	cout << scoala7;
 }
