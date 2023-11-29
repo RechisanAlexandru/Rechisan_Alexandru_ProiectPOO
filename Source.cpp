@@ -1,4 +1,5 @@
 	#include <iostream>
+	#include <fstream>
 	//Domeniu Oras
 
 	using namespace std;
@@ -141,7 +142,15 @@
 		static int getStraziAsfaltate() {
 			return straziAsfaltate;
 		}
+		void setNumeC(const std::string& newNume) {
+			this->nume = newNume;
+		}
+		string getNumeC() const {
+			return nume;
+		}
 		friend int adunaLocuitori(Cartier, int);
+		friend ofstream& operator<<(ofstream& out, const Cartier& cartier);
+		friend ifstream& operator>>(ifstream& in, Cartier& cartier);
 		friend ostream& operator<<(ostream& out, const Cartier& cartier);
 		friend istream& operator>>(istream& in, Cartier& cartier) {
 			cout << "Nume: ";
@@ -179,6 +188,25 @@
 	int adunaLocuitori(Cartier c, int numarAdunat) {
 		c.locuitori += numarAdunat;
 		return c.locuitori;
+	}
+	ofstream& operator<<(ofstream& out, const Cartier& cartier){
+		out << cartier.nume<< endl << cartier.locuitori <<endl;
+
+		for (int i = 0; i < cartier.nrBlocuri; i++)
+			out << cartier.blocuri[i] << " ";
+		out << endl;
+		return out;
+	}
+	ifstream& operator>>(ifstream& in, Cartier& cartier) {
+		in >> cartier.nume;
+		in >> cartier.locuitori;
+		in >> cartier.nrBlocuri;
+		if (cartier.blocuri != NULL)
+			delete[]cartier.blocuri;
+		cartier.blocuri = new string[cartier.nrBlocuri];
+		for (int i = 0; i < cartier.nrBlocuri; i++)
+			in >> cartier.blocuri[i];
+		return in;
 	}
 
 	class Parc {
@@ -312,6 +340,7 @@
 			this->nrTerenJoaca++;
 
 		}
+		friend ofstream& operator<<(ofstream& out, const Parc& parc);
 		friend ostream& operator<<(ostream& out, const Parc& parc);
 		friend istream& operator>>(istream& in, Parc& parc) {
 			cout << "Nume: ";
@@ -330,6 +359,28 @@
 			}
 			return in;
 		}
+		void scrieInFisierBinar(const char* numeFisier) {
+			ofstream fisier(numeFisier, ios::binary | ios::out);
+
+
+			fisier.write((char*)&nrParc, sizeof(int));
+			fisier.write((char*)&vizitatori, sizeof(int));
+
+
+			int lungimeNume = nume.length() + 1;
+			fisier.write((char*)&lungimeNume, sizeof(int));
+			fisier.write(nume.c_str(), lungimeNume);
+
+
+			fisier.write((char*)&nrTerenJoaca, sizeof(int));
+			for (int i = 0; i < nrTerenJoaca; ++i) {
+				int lungimeTeren = terenJoaca[i].length() + 1;
+				fisier.write((char*)&lungimeTeren, sizeof(int));
+				fisier.write(terenJoaca[i].c_str(), lungimeTeren);
+			}
+
+			fisier.close();
+		}
 	};
 	string Parc::oras = "Mangalia";
 	ostream& operator<<(ostream& out, const Parc& parc)
@@ -341,6 +392,14 @@
 		else
 			for (int i = 0; i < parc.nrTerenJoaca; i++)
 				out << parc.terenJoaca[i] << " ";
+		out << endl;
+		return out;
+	}
+	ofstream& operator<<(ofstream& out, const Parc& parc) {
+		out << parc.nume << endl << parc.vizitatori << endl;
+
+		for (int i = 0; i < parc.nrTerenJoaca; i++)
+			out << parc.terenJoaca[i] << " ";
 		out << endl;
 		return out;
 	}
@@ -478,6 +537,7 @@
 
 		}
 		friend int plecareElevi(Scoala, int);
+		friend ofstream& operator<<(ofstream& out, const Scoala& scoala);
 		friend ostream& operator<<(ostream& out, const Scoala& scoala);
 		friend istream& operator>>(istream& in, Scoala& scoala) {
 			cout << "Nume: ";
@@ -496,6 +556,29 @@
 			}
 			return in;
 		}
+
+		void scrieInFisierBinar(const char* numeFisier) {
+			ofstream fisier(numeFisier, ios::binary | ios::out);
+
+			
+			fisier.write((char*)&nrScoala, sizeof(int));
+			fisier.write((char*)&elevi, sizeof(int));
+
+			
+			int lungimeNume = nume.length() + 1;
+			fisier.write((char*)&lungimeNume, sizeof(int));
+			fisier.write(nume.c_str(), lungimeNume);
+
+			
+			fisier.write((char*)&nrSaliSpeciale, sizeof(int));
+			for (int i = 0; i < nrSaliSpeciale; ++i) {
+				int lungimeSala = saliSpeciale[i].length() + 1;
+				fisier.write((char*)&lungimeSala, sizeof(int));
+				fisier.write(saliSpeciale[i].c_str(), lungimeSala);
+			}
+
+			fisier.close();
+		}
 	};
 	string Scoala::oras = "Mangalia";
 	ostream& operator<<(ostream& out, const Scoala& scoala)
@@ -513,6 +596,172 @@
 	int plecareElevi(Scoala s, int eleviPlecati) {
 		s.elevi -= eleviPlecati;
 		return s.elevi;
+	}
+	ofstream& operator<<(ofstream& out, const Scoala& scoala) {
+		out << scoala.nume << endl << scoala.elevi << endl;
+
+		for (int i = 0; i < scoala.nrSaliSpeciale; i++)
+			out << scoala.saliSpeciale[i] << " ";
+		out << endl;
+		return out;
+	}
+	class Sector {
+	private:
+		const int nrSector;
+		string nume;
+		float suprafata;
+		static string oras;
+		int nrCartiere;
+		Cartier* cartiere;
+
+	public:
+		Sector() : nrSector(1) {
+			this->nume = "Nu are nume";
+			this->suprafata = 0;
+			this->nrCartiere = 0;
+			this->cartiere = NULL;
+		}
+		Sector(int nrSector, string nume, int nrCartiere, Cartier* cartiere,float suprafata) :nrSector(nrSector) {
+			this->nume = nume;
+			this->suprafata = suprafata;
+			this->nrCartiere = nrCartiere;
+			this->cartiere = new Cartier[nrCartiere];
+			for (int i = 0; i < nrCartiere; i++)
+				this->cartiere[i] = cartiere[i];
+		}
+		Sector(const Sector& sector) :nrSector(sector.nrSector) {
+			this->nume = sector.nume;
+			this->suprafata = sector.suprafata;
+			this->nrCartiere = sector.nrCartiere;
+			this->cartiere = new Cartier[this->nrCartiere];
+			for (int i = 0; i < nrCartiere; i++)
+				this->cartiere[i] = sector.cartiere[i];
+		}
+		const Sector& operator=(const Sector& sector) {
+			if (this != &sector)
+			{
+				if (this->cartiere != NULL)
+					delete[]this->cartiere;
+				this->nume = sector.nume;
+				this->suprafata = sector.suprafata;
+				this->cartiere = sector.cartiere;
+				this->cartiere = new Cartier[this->nrCartiere];
+				for (int i = 0; i < nrCartiere; i++)
+					this->cartiere[i] = sector.cartiere[i];
+				return *this;
+			}
+		}
+		~Sector() {
+			delete[]this->cartiere;
+		}
+		friend ostream& operator<<(ostream& out, Sector& sector);
+		friend ofstream& operator<<(ofstream& out, Sector& sector);
+		friend ifstream& operator>>(ifstream& in, Sector& sector);
+		friend istream& operator>>(istream& in, Sector& sector) {
+			cout << "Nume: ";
+			in >> sector.nume;
+			cout << "\nSuprafata: ";
+			in >> sector.suprafata;
+			cout << "\nNumar cartiere: ";
+			in >> sector.nrCartiere;
+			if (sector.cartiere != NULL) {
+				delete[]sector.cartiere;
+			}
+			sector.cartiere = new Cartier[sector.nrCartiere];
+			for (int i = 0; i < sector.nrCartiere; i++) {
+				cout << "Cartierul " << i + 1 << ": ";
+				in >> sector.cartiere[i];
+			}
+			return in;
+		}
+		void afisare() {
+			cout << "Sectorul " << this->nume << " cu numarul " << this->nrSector << " din orasul " << this->oras << " are o suprafata de " << this->suprafata
+				<< ", are un numar de " << this->nrCartiere<< " cartiere, acestea fiind numite: " << endl;
+			if (nrCartiere != 0 && cartiere != NULL) {
+				for (int i = 0; i < this->nrCartiere; i++) {
+					cout << "Cartier " << i + 1 << ": " << cartiere[i].getNume() << endl;
+					cout << endl;
+				}
+			}
+			else
+				cout << "Cartierele nu au fost introduse" << endl << endl;
+		}
+		Cartier* getCartiere() const {
+			return cartiere;
+		}
+		static void setOras(string oras) {
+			Sector::oras = oras;
+		}
+		int getnrSector() {
+			return this->nrSector;
+		}
+		static string getOras() {
+			return Sector::oras;
+		}
+		void setNume(string nume) {
+				this->nume = nume;
+		}
+		string getNume() {
+			return this->nume;
+		}
+
+		void setSuprafata(float suprafata) {
+			this->suprafata = suprafata;
+		}
+		int getSuprafata() {
+			return this->suprafata;
+		}
+		void setNrCartiere(int nrCartiere, Cartier* cartier) {
+			if (nrCartiere > 0) {
+				this->nrCartiere = nrCartiere;
+				if (this->cartiere != NULL)
+					delete[]this->cartiere;
+				cartiere = new Cartier[this->nrCartiere];
+				for (int i = 0; i < nrCartiere; i++)
+					this->cartiere[i] = cartier[i];
+			}
+		}
+		Cartier* getCartier() {
+			return cartiere;
+		}
+
+		operator int() {
+			return suprafata;
+		}
+		
+	};
+	string Sector::oras = "Mangalia";
+	ostream& operator<<(ostream& out, Sector& sector)
+	{
+		out << "Sectorul " << sector.nume << " are numarul " << sector.nrSector << ", se afla in orasul " << sector.oras << ", are suprafata de " <<
+			sector.suprafata << ". Are " << sector.nrCartiere << " cartiere, acestea fiind: "<<endl;
+		if (sector.nrCartiere == 0)
+			out << " -";
+		else
+			for (int i = 0; i < sector.nrCartiere; i++)
+				out << sector.cartiere[i] << " ";
+		out << endl;
+		return out;
+	}
+	ofstream& operator<<(ofstream& out, Sector& sector) {
+		out << sector.nume << endl << sector.suprafata << endl;
+
+		for (int i = 0; i < sector.nrCartiere; i++)
+			out << sector.cartiere[i] << " ";
+		out << endl;
+		return out;
+	}
+	ifstream& operator>>(ifstream& in, Sector& sector) {
+		in >> sector.nume;
+		in >> sector.suprafata;
+		in >> sector.nrCartiere;
+		sector.cartiere = new Cartier[sector.nrCartiere];
+		for (int i = 0; i < sector.nrCartiere; i++) {
+			cout << "Cartier " << i + 1 << ":" << endl;
+			in >> sector.cartiere[i];
+		}
+
+		return in;
 	}
 	int main()
 	{
@@ -737,4 +986,67 @@
 			cout << "Scoala " << i + 1 << endl;
 			cout << v_scoala[i];
 		}
+		cout << endl;
+		Cartier* cartiere = new Cartier[2];
+
+		Sector sector1(1, "Sector 1", 2, cartiere, 500.2);
+		sector1.getCartiere()[0].setNumeC("Cartier A");
+		sector1.getCartiere()[1].setNumeC("Cartier B");
+		sector1.afisare();
+
+		Sector sector2(sector1);
+		cin >> sector2;
+		cout << sector2;
+		int suprafataC = sector2;
+		cout << suprafataC << endl;
+		Sector sector3(sector1);
+		sector3.setNume("S3");
+		cout << endl << sector3.getNume();
+		sector3.setOras("Bucuresti");
+		cout << endl << sector3.getOras();
+		sector3.setSuprafata(275);
+		cout << endl << sector3.getSuprafata();
+		Cartier* v2 = new Cartier[3];
+		sector3.setNrCartiere(3, v2);
+		cout << endl;
+		cout << sector3;
+		cout << endl;
+
+		ofstream f("cartier.txt", ios::out);
+		Cartier cartier9;
+		cin >> cartier9;
+		f << cartier9;
+		f.close();
+		ifstream g("cartier.txt", ios::in);
+		Cartier c9;
+		g >> c9;
+		cout << c9;
+		g.close();
+
+
+		string* v4 = new string[2];
+		v4[0] = "Tenis";
+		v4[1] = "Baschet";
+
+		Parc parc10("Portului ", 5000, 2, 2, v4);
+		parc10.scrieInFisierBinar("parc.bin");
+		
+		string* v3 = new string[2];
+		v3[0] = "Chimie";
+		v3[1] = "Biologie";
+
+		cout << endl;
+		Scoala scoala9("Sf. Andrei", 350, 2, 2, v3);
+		scoala9.scrieInFisierBinar("scoala.bin");
+
+		/*ofstream f("sector.txt", ios::out);
+		Sector sector4;
+		cin >> sector4;
+		f <<sector4;
+		f.close();
+		ifstream g("sector.txt", ios::in);
+		Sector s4;
+		g >> s4;
+		cout << s4;
+		g.close();*/
 	}
