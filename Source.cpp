@@ -3,7 +3,11 @@
 	//Domeniu Oras
 
 	using namespace std;
-	class Cartier {
+	class AbsCartier {
+	public:
+		virtual void printAbsCartier() = 0;
+	};
+	class Cartier:public AbsCartier {
 	private:
 		const int nrCartier;
 		string nume;
@@ -13,6 +17,9 @@
 		string* blocuri;
 		static int straziAsfaltate;
 	public:
+		void printAbsCartier() {
+			cout << "Cartierul " << this->nume << " are " << this->locuitori << " locuitori." << endl;
+		}
 		Cartier() : nrCartier(1) {
 			this->nume = "Nu are nume";
 			this->locuitori = 0;
@@ -209,7 +216,11 @@
 		return in;
 	}
 
-	class Parc {
+	class AbsParc {
+	public:
+		virtual void printAbsParc() = 0;
+	};
+	class Parc:public AbsParc {
 	private:
 		string nume;
 		int vizitatori;
@@ -218,6 +229,9 @@
 		int nrTerenJoaca;
 		string* terenJoaca;
 	public:
+		void printAbsParc() {
+			cout << "Parcul " << this->nume << " are " << this->vizitatori << " vizitatori." << endl;
+		}
 		Parc() :nrParc(1) {
 			this->nume = "Nu are nume ";
 			this->vizitatori = 0;
@@ -494,7 +508,6 @@
 			return Scoala::oras;
 		}
 		void setNume(string nume) {
-			if (nume.length() > 3)
 				this->nume = nume;
 		}
 		string getNume() {
@@ -763,7 +776,227 @@
 
 		return in;
 	}
-	int main()
+
+	class ModernCartier : public Cartier {
+	private:
+		int aniModernizare;
+		char* numeModernizare;
+	public:
+		void printAbsCartier() {
+			cout << "Cartierul a fost modernizat pe o perioada de " << this->aniModernizare << " ani." << endl;
+		}
+		ModernCartier() :Cartier(12, "Berceni", 199) {
+			this->aniModernizare = 4;
+			this->numeModernizare = new char[strlen("Treceri de pietoni luminate") + 1];
+			strcpy_s(this->numeModernizare, strlen("Treceri de pietoni luminate") + 1, "Treceri de pietoni luminate");
+		}
+		ModernCartier(int aniModernizare, const char* numeModernizare) :Cartier() {
+			this->aniModernizare = aniModernizare;
+			this->numeModernizare = new char[strlen(numeModernizare) + 1];
+			strcpy_s(this->numeModernizare, strlen(numeModernizare) + 1, numeModernizare);
+		}
+		ModernCartier(int aniModernizare, const char* numeModernizare, string nume, int nrBlocuri, string* blocuri, int locuitori) :Cartier(1, nume, nrBlocuri, blocuri, locuitori) {
+			this->aniModernizare = aniModernizare;
+			this->numeModernizare = new char[strlen(numeModernizare) + 1];
+			strcpy_s(this->numeModernizare, strlen(numeModernizare) + 1, numeModernizare);
+		}
+		ModernCartier(const ModernCartier& mc) :Cartier(mc) {
+			this->aniModernizare = mc.aniModernizare;
+			this->numeModernizare = new char[strlen(mc.numeModernizare) + 1];
+			strcpy_s(this->numeModernizare, strlen(mc.numeModernizare) + 1, mc.numeModernizare);
+		}
+		ModernCartier operator=(const ModernCartier& mc) {
+			if (this != &mc) {
+				Cartier::operator=(mc);
+				this->aniModernizare = mc.aniModernizare;
+				if (this->numeModernizare) {
+					delete[]this->numeModernizare;
+				}
+				this->numeModernizare = new char[strlen(mc.numeModernizare) + 1];
+				strcpy_s(this->numeModernizare, strlen(mc.numeModernizare) + 1, mc.numeModernizare);
+			}
+			return *this;
+		}
+		~ModernCartier() {
+			if (this->numeModernizare) {
+				delete[]this->numeModernizare;
+			}
+		}
+		void setAniModernizare(int aniModernizare) {
+			this->aniModernizare = aniModernizare;
+		}
+		int getAniModernizare() {
+			return this->aniModernizare;
+		}
+		void setNumeModernizare(char* numeModernizare) {
+			this->numeModernizare = numeModernizare;
+		}
+		char* getNumeModernizare() {
+			return this->numeModernizare;
+		}
+		friend ostream& operator<<(ostream& ecran, const ModernCartier& mc) {
+			ecran << (Cartier)mc;
+			ecran << mc.numeModernizare << " ";
+			ecran <<mc.aniModernizare << endl;
+			return ecran;
+		}
+
+		friend istream& operator>>(istream& tast, ModernCartier& mc) {
+			tast >> (Cartier&)mc;
+			cout << "Ani modernizare:";
+			tast >> mc.aniModernizare;
+			if (mc.numeModernizare)
+			{
+				delete[]mc.numeModernizare;
+			}
+			cout << "Nume modernizare:";
+			char buffer[30];
+			tast >> buffer;
+			mc.numeModernizare = new char[strlen(buffer) + 1];
+			strcpy_s(mc.numeModernizare, strlen(buffer) + 1, buffer);
+			return tast;
+		}
+	};
+
+	class CuratareParc :public Parc {
+	private:
+		int perioadaCuratare;
+		char* zonaCuratata;
+	public:
+		void printAbsParc() {
+			cout << "Parcul a fost curatat pe o perioada de " << this->perioadaCuratare << " zile." << endl;
+		}
+		CuratareParc() :Parc("Central",5678,5,0) {
+			this->perioadaCuratare = 2;
+			this->zonaCuratata = new char[strlen("Zona locurilor de joaca") + 1];
+			strcpy_s(this->zonaCuratata, strlen("Zona locurilor de joaca") + 1, "Zona locurilor de joaca");
+		}
+		CuratareParc(int perioadaCuratare, const char* zonaCuratata) :Parc() {
+			this->perioadaCuratare = perioadaCuratare;
+			this->zonaCuratata = new char[strlen(zonaCuratata) + 1];
+			strcpy_s(this->zonaCuratata, strlen(zonaCuratata) + 1, zonaCuratata);
+		}
+		CuratareParc(int perioadaCuratare, const char* zonaCuratata, string nume, int vizitatori, int nrParc, int nrTerenJoaca, string* terenJoaca) :Parc(nume,vizitatori,3, nrTerenJoaca, terenJoaca) {
+			this->perioadaCuratare = perioadaCuratare;
+			this->zonaCuratata = new char[strlen(zonaCuratata) + 1];
+			strcpy_s(this->zonaCuratata, strlen(zonaCuratata) + 1, zonaCuratata);
+		}
+		CuratareParc(const CuratareParc& cp) :Parc(cp) {
+			this->perioadaCuratare = cp.perioadaCuratare;
+			this->zonaCuratata = new char[strlen(cp.zonaCuratata) + 1];
+			strcpy_s(this->zonaCuratata, strlen(cp.zonaCuratata) + 1, cp.zonaCuratata);
+		}
+		CuratareParc operator=(const CuratareParc& cp) {
+			if (this != &cp) {
+				Parc::operator=(cp);
+				this->perioadaCuratare = cp.perioadaCuratare;
+				if (this->zonaCuratata) {
+					delete[]this->zonaCuratata;
+				}
+				this->zonaCuratata = new char[strlen(cp.zonaCuratata) + 1];
+				strcpy_s(this->zonaCuratata, strlen(cp.zonaCuratata) + 1, cp.zonaCuratata);
+			}
+			return *this;
+		}
+		~CuratareParc() {
+			if (this->zonaCuratata) {
+				delete[]this->zonaCuratata;
+			}
+		}
+		void setPeroiadaCuratare(int perioadaCuratare) {
+			this->perioadaCuratare = perioadaCuratare;
+		}
+		int getPerioadaCuratare() {
+			return this->perioadaCuratare;
+		}
+		void setZonaCuratata(char* zonaCuratata) {
+			this->zonaCuratata = zonaCuratata;
+		}
+		char* getZonaCuratata() {
+			return this->zonaCuratata;
+		}
+		friend ostream& operator<<(ostream& ecran, const CuratareParc& cp) {
+			ecran << (Parc)cp;
+			ecran << cp.zonaCuratata << " ";
+			ecran << cp.perioadaCuratare << endl;
+			return ecran;
+		}
+
+		friend istream& operator>>(istream& tast, CuratareParc& cp) {
+			tast >> (Cartier&)cp;
+			cout << "Ani modernizare:";
+			tast >> cp.perioadaCuratare;
+			if (cp.zonaCuratata)
+			{
+				delete[]cp.zonaCuratata;
+			}
+			cout << "Nume modernizare:";
+			char buffer[30];
+			tast >> buffer;
+			cp.zonaCuratata = new char[strlen(buffer) + 1];
+			strcpy_s(cp.zonaCuratata, strlen(buffer) + 1, buffer);
+			return tast;
+		}
+	};
+
+	class Oras {
+	private:
+		int nrSectoare;
+		AbsCartier* *sectoare;
+	public:
+		Oras() {
+			nrSectoare = 5;
+			sectoare = new AbsCartier * [5];
+			for (int i = 0; i < 5; i++) {
+				this->sectoare[i] = new Cartier();
+			}
+		}
+		AbsCartier*& operator[](int index) {
+			if (index >= 0 && index < this->nrSectoare) {
+				return this->sectoare[index];
+			}
+			else {
+				throw 404;
+			}
+		}
+	};
+	
+	class Park {
+	private:
+		int nrParcuri;
+		AbsParc* *parcuri;
+	public:
+		Park() {
+			nrParcuri = 5;
+			parcuri = new AbsParc * [5];
+			for (int i = 0; i < 5; i++) {
+				this->parcuri[i] = new Parc();
+			}
+		}
+		AbsParc*& operator[](int index) {
+			if (index >= 0 && index < this->nrParcuri) {
+				return this->parcuri[index];
+			}
+			else {
+				throw 404;
+			}
+		}
+	};
+	
+	void functiePrintare(AbsCartier* c) {
+		c->printAbsCartier();
+	}
+	void functiePrint(AbsParc* p) {
+		p->printAbsParc();
+	}
+	void functiePrinta(CuratareParc cp) {
+		cp.printAbsParc();
+	}
+	void functiePrintMC(ModernCartier mc) {
+		mc.printAbsCartier();
+	}
+
+	void main()
 	{
 		Cartier cartier1;
 		cartier1.afisare();
@@ -1030,7 +1263,7 @@
 
 		Parc parc10("Portului ", 5000, 2, 2, v4);
 		parc10.scrieInFisierBinar("parc.bin");
-		
+
 		string* v3 = new string[2];
 		v3[0] = "Chimie";
 		v3[1] = "Biologie";
@@ -1049,4 +1282,49 @@
 		g >> s4;
 		cout << s4;
 		g.close();*/
+		ModernCartier mc1;
+		ModernCartier mc2(20, "Semafoare");
+		ModernCartier mc3 = mc1;
+		ModernCartier mc4;
+		mc4 = mc2;
+		string blocuri[5]{ "F1","F2","F3","F4","F5" };
+		mc1.setNrBlocuri(5, blocuri);
+		cout << mc1;
+		cin >> mc2;
+		cout << mc2;
+		mc4.setAniModernizare(10);
+		cout << mc4;
+
+		CuratareParc cp1;
+		CuratareParc cp2(15, "Banci");
+		CuratareParc cp3 = cp1;
+		CuratareParc cp4;
+		cp4 = cp2;
+		string terenuriJoaca[3]{ "Fotbal","Baschet","Tenis" };
+		cp1.setNrTerenJoaca(3, terenuriJoaca);
+		cout << cp1;
+		cout << cp2;
+		cp4.setPeroiadaCuratare(20);
+		cout << cp4<<endl;
+
+		Oras oras;
+		oras[0] = new Cartier(0, "C1", 333);
+		oras[1] = new ModernCartier(7, "Senzori pe autobuze");
+		oras[2] = new Cartier(2, "C2", 234);
+		oras[3] = new ModernCartier(11, "Magistrala noua");
+		oras[4] = new ModernCartier(12, "Statie noua autobuz");
+		for (int i = 0; i < 5; i++) {
+			oras[i]->printAbsCartier();
+		}
+		cout << endl;
+
+		Park park;
+		park[0] = new Parc("P1", 3000, 1, 2);
+		park[1] = new CuratareParc(7, "Tenis");
+		park[2] = new Parc("P2", 2000,2,3);
+		park[3] = new CuratareParc(5, "Fotbal");
+		park[4] = new CuratareParc(4, "Baschet");
+		for (int i = 0; i < 5; i++) {
+			park[i]->printAbsParc();
+		}
 	}
