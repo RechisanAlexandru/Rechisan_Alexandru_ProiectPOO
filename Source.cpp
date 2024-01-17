@@ -155,6 +155,7 @@
 		string getNumeC() const {
 			return nume;
 		}
+		void desfasoaraEveniment(class Parc& parc);
 		friend int adunaLocuitori(Cartier, int);
 		friend ofstream& operator<<(ofstream& out, const Cartier& cartier);
 		friend ifstream& operator>>(ifstream& in, Cartier& cartier);
@@ -177,6 +178,7 @@
 			return in;
 		}
 	};
+
 	string Cartier::oras = "Mangalia";
 	int Cartier::straziAsfaltate = 0;
 	ostream& operator<<(ostream& out, const Cartier& cartier)
@@ -354,6 +356,7 @@
 			this->nrTerenJoaca++;
 
 		}
+		void desfasoaraEveniment(class Cartier& cartier);
 		friend ofstream& operator<<(ofstream& out, const Parc& parc);
 		friend ostream& operator<<(ostream& out, const Parc& parc);
 		friend istream& operator>>(istream& in, Parc& parc) {
@@ -996,335 +999,361 @@
 		mc.printAbsCartier();
 	}
 
+	void Cartier::desfasoaraEveniment(Parc& parc) {
+		int popCartier = getLocuitori();
+		int popAdunata = popCartier / 4;
+
+		setLocuitori(popAdunata);
+		parc.setVizitatori(parc.getVizitatori() + popAdunata);
+		cout << "Eveniment intre Cartierul " << this->getNume() << " si Parcul " << parc.getNume() << ":\n";
+		cout << "Un sfert din locuitorii cartierului " << this->getNume() << " participa la evenimentul din parcul " << parc.getNume()
+			<<". Aici participa si vizitatorii parcului" << ".\n";
+	}
+	void Parc::desfasoaraEveniment(Cartier& cartier) {
+		int vizitatoriParc = getVizitatori();
+
+	}
+	void evenimentIntalnire(Cartier& cartier, Parc& parc) {
+		cartier.desfasoaraEveniment(parc);
+		parc.desfasoaraEveniment(cartier);
+	}
+
 	void main()
 	{
-		Cartier cartier1;
-		cartier1.afisare();
+		Cartier cartierX(1, "Cartier A", 500);
+		Parc parcY("Parc Central", 1000, 2, 0);
 
-		string* numeBlocuri = new string[6];
-		numeBlocuri[0] = "A1";
-		numeBlocuri[1] = "A2";
-		numeBlocuri[2] = "B1";
-		numeBlocuri[3] = "B2";
-		numeBlocuri[4] = "C1";
-		numeBlocuri[5] = "C2";
-		Cartier cartier2(2, "Colonisti", 6, numeBlocuri, 500);
-		cartier2.afisare();
+		evenimentIntalnire(cartierX, parcY);
+		cout << "Locuitorii din cartierul " << cartierX.getNume() << " ce participa la eveniment: " << cartierX.getLocuitori() << "\n";
+		cout << "Numarul total de participanti al evenimentului din parcul " << parcY.getNume() << ": " << parcY.getVizitatori() << "\n";
 
-		cout << "Populatia medie pe bloc este de " << cartier2.populatieMedie() << endl;
+		//Cartier cartier1;
+		//cartier1.afisare();
 
-		Cartier cartier3(3, "Militari", 100000);
-		Cartier::setOras("Bucuresti");
-		Cartier::adaugareStrazi(5);
-		cartier3.afisare();
-		cout << endl;
-		Cartier cartier4(cartier3);
+		//string* numeBlocuri = new string[6];
+		//numeBlocuri[0] = "A1";
+		//numeBlocuri[1] = "A2";
+		//numeBlocuri[2] = "B1";
+		//numeBlocuri[3] = "B2";
+		//numeBlocuri[4] = "C1";
+		//numeBlocuri[5] = "C2";
+		//Cartier cartier2(2, "Colonisti", 6, numeBlocuri, 500);
+		//cartier2.afisare();
 
-		cartier4.afisare();
-		cout << endl;
+		//cout << "Populatia medie pe bloc este de " << cartier2.populatieMedie() << endl;
 
-		cartier4.setNume("Titan");
-		cout << endl << cartier4.getNume();
-		cartier4.setOras("Tokyo");
-		cout << endl << cartier4.getOras();
-		cartier4.setLocuitori(275);
-		cout << endl << cartier4.getLocuitori();
-		cartier4.setStraziAsfaltate(10);
-		cout << endl << cartier4.getStraziAsfaltate();
-		string* v1 = new string[7]{ "A1","A2","A3","A4","A5","A6","A7" };
-		cartier4.setNrBlocuri(7, v1);
-		cout << endl;
-		cartier4.afisare();
-		cout << endl;
+		//Cartier cartier3(3, "Militari", 100000);
+		//Cartier::setOras("Bucuresti");
+		//Cartier::adaugareStrazi(5);
+		//cartier3.afisare();
+		//cout << endl;
+		//Cartier cartier4(cartier3);
 
+		//cartier4.afisare();
+		//cout << endl;
 
-		Cartier cartier5;
-		cartier5.setLocuitori(100);
-		cartier5.afisare();
-		int numarAdunat = 50;
-		int locuitoriDupaAdunare = adunaLocuitori(cartier5, numarAdunat);
-		cout << "Dupa venirea a " << numarAdunat << " locuitori, cartierul are " << locuitoriDupaAdunare << " locuitori." << endl;
-
-		cout << endl;
-		Cartier cartier6;
-		cartier6 = cartier3;
-		cartier6.afisare();
-		cout << endl;
-
-		cout << endl;
-		cout << cartier2 << endl;
-		cin >> cartier2;
-		cout << cartier2;
-		cout << endl;
-
-		cout << endl;
-		Cartier cartier7;
-		cartier7 = cartier3 + cartier3;
-		cout << cartier7;
-
-		cout << endl;
-		Cartier cartier8;
-		cartier8.setNrBlocuri(3, new string[3]{ "Bloc A", "Bloc B", "Bloc C" });
-		cartier8[2] = "Bloc D";
-		cout << cartier8;
-		cout << endl;
+		//cartier4.setNume("Titan");
+		//cout << endl << cartier4.getNume();
+		//cartier4.setOras("Tokyo");
+		//cout << endl << cartier4.getOras();
+		//cartier4.setLocuitori(275);
+		//cout << endl << cartier4.getLocuitori();
+		//cartier4.setStraziAsfaltate(10);
+		//cout << endl << cartier4.getStraziAsfaltate();
+		//string* v1 = new string[7]{ "A1","A2","A3","A4","A5","A6","A7" };
+		//cartier4.setNrBlocuri(7, v1);
+		//cout << endl;
+		//cartier4.afisare();
+		//cout << endl;
 
 
-		Cartier* v_cartier = new Cartier[3];
-		for (int i = 0; i < 3; i++) {
-			cout << "Introduceti informatii pentru Cartier " << i + 1 << ": " << endl;
-			cin >> v_cartier[i];
-		}
-		for (int i = 0; i < 3; i++) {
-			cout << "Cartier " << i + 1 << endl;
-			cout << v_cartier[i];
-		}
+		//Cartier cartier5;
+		//cartier5.setLocuitori(100);
+		//cartier5.afisare();
+		//int numarAdunat = 50;
+		//int locuitoriDupaAdunare = adunaLocuitori(cartier5, numarAdunat);
+		//cout << "Dupa venirea a " << numarAdunat << " locuitori, cartierul are " << locuitoriDupaAdunare << " locuitori." << endl;
+
+		//cout << endl;
+		//Cartier cartier6;
+		//cartier6 = cartier3;
+		//cartier6.afisare();
+		//cout << endl;
+
+		//cout << endl;
+		//cout << cartier2 << endl;
+		//cin >> cartier2;
+		//cout << cartier2;
+		//cout << endl;
+
+		//cout << endl;
+		//Cartier cartier7;
+		//cartier7 = cartier3 + cartier3;
+		//cout << cartier7;
+
+		//cout << endl;
+		//Cartier cartier8;
+		//cartier8.setNrBlocuri(3, new string[3]{ "Bloc A", "Bloc B", "Bloc C" });
+		//cartier8[2] = "Bloc D";
+		//cout << cartier8;
+		//cout << endl;
 
 
-		Cartier** m_cartier = new Cartier * [3];
-		for (int i = 0; i < 2; i++) {
-			for (int j = 0; j < 2; j++) {
-				m_cartier[i] = new Cartier();
-				cout << "Introduceti informatii pentru Cartier " << i + 1 << ": " << endl;
-				cin >> *m_cartier[i];
-			}
-		}
-		for (int i = 0; i < 2; i++) {
-			for (int j = 0; j < 2; j++) {
-				cout << "Cartier " << i + 1 << endl;
-				cout << *m_cartier[i];
-			}
-		}
-		cout << endl;
-
-		cout << endl;
-		Parc parc1;
-		parc1.afisare();
-		string* terenJoaca = new string[2];
-		terenJoaca[0] = "Fotbal";
-		terenJoaca[1] = "Baschet";
-
-		Parc parc2("Portului ", 5000, 2, 2, terenJoaca);
-		parc2.afisare();
-		cout << endl;
-
-		Parc parc3("Magicieni ", 3000, 3, 0);
-		Parc::setOras("Bucuresti");
-		parc3.afisare();
-		cout << endl;
-
-		Parc parc4(parc2);
-		parc4.afisare();
-		cout << endl;
-
-		parc4.setNume("Tosca ");
-		cout << endl << parc4.getNume();
-		parc4.setOras("Furtunesti");
-		cout << endl << parc4.getOras();
-		parc4.setVizitatori(900);
-		cout << endl << parc4.getVizitatori();
-		parc4.addNouTeren("Tenis");
-		cout << endl;
-		parc4.afisare();
-
-		Parc parc5;
-		parc5 = parc3;
-		parc5.afisare();
-
-		cout << endl;
-		cout << parc2 << endl;
-		cin >> parc2;
-		cout << parc2;
-		cout << endl;
-
-		cout << endl;
-		Parc parc7;
-		parc7 = parc3 + parc3;
-		cout << parc7;
-
-		Parc* v_parc = new Parc[3];
-		for (int i = 0; i < 3; i++) {
-			cout << "Introduceti informatii pentru parc " << i + 1 << ": " << endl;
-			cin >> v_parc[i];
-		}
-
-		for (int i = 0; i < 3; i++) {
-			cout << "Parc " << i + 1 << endl;
-			cout << v_parc[i];
-		}
-
-		cout << endl;
-		Scoala scoala1;
-		scoala1.afisare();
-		string* saliSpeciale = new string[2];
-		saliSpeciale[0] = "Chimie";
-		saliSpeciale[1] = "Biologie";
-
-		cout << endl;
-		Scoala scoala2("Sf. Andrei", 350, 2, 2, saliSpeciale);
-		scoala2.afisare();
-
-		cout << endl;
-		Scoala scoala3("Gala Galaction", 400, 3);
-		Scoala::setOras("Bucuresti");
-		scoala3.afisare();
-
-		cout << endl;
-		Scoala scoala4(scoala2);
-		scoala4.afisare();
-		cout << endl;
-		scoala4.setNume("Callatis ");
-		cout << endl << scoala4.getNume();
-		scoala4.setOras("Calarasi");
-		cout << endl << scoala4.getOras();
-		scoala4.setElevi(700);
-		cout << endl << scoala4.getElevi();
-		scoala4.addSalaSpeciala("Fizica");
-		cout << endl;
-		scoala4.afisare();
+		//Cartier* v_cartier = new Cartier[3];
+		//for (int i = 0; i < 3; i++) {
+		//	cout << "Introduceti informatii pentru Cartier " << i + 1 << ": " << endl;
+		//	cin >> v_cartier[i];
+		//}
+		//for (int i = 0; i < 3; i++) {
+		//	cout << "Cartier " << i + 1 << endl;
+		//	cout << v_cartier[i];
+		//}
 
 
-		Scoala scoala5;
-		scoala5.setElevi(350);
-		scoala5.afisare();
-		int eleviPlecati = 120;
-		int eleviDupaPlecare = plecareElevi(scoala5, eleviPlecati);
-		cout << "Dupa plecarea a " << eleviPlecati << " elevi, scoala a ramas cu " << eleviDupaPlecare << " elevi " << endl;
+		//Cartier** m_cartier = new Cartier * [3];
+		//for (int i = 0; i < 2; i++) {
+		//	for (int j = 0; j < 2; j++) {
+		//		m_cartier[i] = new Cartier();
+		//		cout << "Introduceti informatii pentru Cartier " << i + 1 << ": " << endl;
+		//		cin >> *m_cartier[i];
+		//	}
+		//}
+		//for (int i = 0; i < 2; i++) {
+		//	for (int j = 0; j < 2; j++) {
+		//		cout << "Cartier " << i + 1 << endl;
+		//		cout << *m_cartier[i];
+		//	}
+		//}
+		//cout << endl;
 
-		Scoala scoala6;
-		scoala6 = scoala3;
-		scoala6.afisare();
+		//cout << endl;
+		//Parc parc1;
+		//parc1.afisare();
+		//string* terenJoaca = new string[2];
+		//terenJoaca[0] = "Fotbal";
+		//terenJoaca[1] = "Baschet";
 
-		cout << endl;
-		cout << scoala2 << endl;
-		cin >> scoala2;
-		cout << scoala2;
-		cout << endl;
+		//Parc parc2("Portului ", 5000, 2, 2, terenJoaca);
+		//parc2.afisare();
+		//cout << endl;
 
-		cout << endl;
-		Scoala scoala7;
-		scoala7 = scoala3 + scoala3;
-		cout << scoala7;
+		//Parc parc3("Magicieni ", 3000, 3, 0);
+		//Parc::setOras("Bucuresti");
+		//parc3.afisare();
+		//cout << endl;
 
-		int numarElevi = scoala3;
-		cout << numarElevi;
+		//Parc parc4(parc2);
+		//parc4.afisare();
+		//cout << endl;
 
-		cout << endl;
-		Scoala* v_scoala = new Scoala[3];
-		for (int i = 0; i < 3; i++) {
-			cout << "Introduceti informatii pentru scoala " << i + 1 << ": " << endl;
-			cin >> v_scoala[i];
-		}
-		for (int i = 0; i < 3; i++) {
-			cout << "Scoala " << i + 1 << endl;
-			cout << v_scoala[i];
-		}
-		cout << endl;
-		Cartier* cartiere = new Cartier[2];
+		//parc4.setNume("Tosca ");
+		//cout << endl << parc4.getNume();
+		//parc4.setOras("Furtunesti");
+		//cout << endl << parc4.getOras();
+		//parc4.setVizitatori(900);
+		//cout << endl << parc4.getVizitatori();
+		//parc4.addNouTeren("Tenis");
+		//cout << endl;
+		//parc4.afisare();
 
-		Sector sector1(1, "Sector 1", 2, cartiere, 500.2);
-		sector1.getCartiere()[0].setNumeC("Cartier A");
-		sector1.getCartiere()[1].setNumeC("Cartier B");
-		sector1.afisare();
+		//Parc parc5;
+		//parc5 = parc3;
+		//parc5.afisare();
 
-		Sector sector2(sector1);
-		cin >> sector2;
-		cout << sector2;
-		int suprafataC = sector2;
-		cout << suprafataC << endl;
-		Sector sector3(sector1);
-		sector3.setNume("S3");
-		cout << endl << sector3.getNume();
-		sector3.setOras("Bucuresti");
-		cout << endl << sector3.getOras();
-		sector3.setSuprafata(275);
-		cout << endl << sector3.getSuprafata();
-		Cartier* v2 = new Cartier[3];
-		sector3.setNrCartiere(3, v2);
-		cout << endl;
-		cout << sector3;
-		cout << endl;
+		//cout << endl;
+		//cout << parc2 << endl;
+		//cin >> parc2;
+		//cout << parc2;
+		//cout << endl;
 
-		ofstream f("cartier.txt", ios::out);
-		Cartier cartier9;
-		cin >> cartier9;
-		f << cartier9;
-		f.close();
-		ifstream g("cartier.txt", ios::in);
-		Cartier c9;
-		g >> c9;
-		cout << c9;
-		g.close();
+		//cout << endl;
+		//Parc parc7;
+		//parc7 = parc3 + parc3;
+		//cout << parc7;
+
+		//Parc* v_parc = new Parc[3];
+		//for (int i = 0; i < 3; i++) {
+		//	cout << "Introduceti informatii pentru parc " << i + 1 << ": " << endl;
+		//	cin >> v_parc[i];
+		//}
+
+		//for (int i = 0; i < 3; i++) {
+		//	cout << "Parc " << i + 1 << endl;
+		//	cout << v_parc[i];
+		//}
+
+		//cout << endl;
+		//Scoala scoala1;
+		//scoala1.afisare();
+		//string* saliSpeciale = new string[2];
+		//saliSpeciale[0] = "Chimie";
+		//saliSpeciale[1] = "Biologie";
+
+		//cout << endl;
+		//Scoala scoala2("Sf. Andrei", 350, 2, 2, saliSpeciale);
+		//scoala2.afisare();
+
+		//cout << endl;
+		//Scoala scoala3("Gala Galaction", 400, 3);
+		//Scoala::setOras("Bucuresti");
+		//scoala3.afisare();
+
+		//cout << endl;
+		//Scoala scoala4(scoala2);
+		//scoala4.afisare();
+		//cout << endl;
+		//scoala4.setNume("Callatis ");
+		//cout << endl << scoala4.getNume();
+		//scoala4.setOras("Calarasi");
+		//cout << endl << scoala4.getOras();
+		//scoala4.setElevi(700);
+		//cout << endl << scoala4.getElevi();
+		//scoala4.addSalaSpeciala("Fizica");
+		//cout << endl;
+		//scoala4.afisare();
 
 
-		string* v4 = new string[2];
-		v4[0] = "Tenis";
-		v4[1] = "Baschet";
+		//Scoala scoala5;
+		//scoala5.setElevi(350);
+		//scoala5.afisare();
+		//int eleviPlecati = 120;
+		//int eleviDupaPlecare = plecareElevi(scoala5, eleviPlecati);
+		//cout << "Dupa plecarea a " << eleviPlecati << " elevi, scoala a ramas cu " << eleviDupaPlecare << " elevi " << endl;
 
-		Parc parc10("Portului ", 5000, 2, 2, v4);
-		parc10.scrieInFisierBinar("parc.bin");
+		//Scoala scoala6;
+		//scoala6 = scoala3;
+		//scoala6.afisare();
 
-		string* v3 = new string[2];
-		v3[0] = "Chimie";
-		v3[1] = "Biologie";
+		//cout << endl;
+		//cout << scoala2 << endl;
+		//cin >> scoala2;
+		//cout << scoala2;
+		//cout << endl;
 
-		cout << endl;
-		Scoala scoala9("Sf. Andrei", 350, 2, 2, v3);
-		scoala9.scrieInFisierBinar("scoala.bin");
+		//cout << endl;
+		//Scoala scoala7;
+		//scoala7 = scoala3 + scoala3;
+		//cout << scoala7;
 
-		/*ofstream f("sector.txt", ios::out);
-		Sector sector4;
-		cin >> sector4;
-		f <<sector4;
-		f.close();
-		ifstream g("sector.txt", ios::in);
-		Sector s4;
-		g >> s4;
-		cout << s4;
-		g.close();*/
-		ModernCartier mc1;
-		ModernCartier mc2(20, "Semafoare");
-		ModernCartier mc3 = mc1;
-		ModernCartier mc4;
-		mc4 = mc2;
-		string blocuri[5]{ "F1","F2","F3","F4","F5" };
-		mc1.setNrBlocuri(5, blocuri);
-		cout << mc1;
-		cin >> mc2;
-		cout << mc2;
-		mc4.setAniModernizare(10);
-		cout << mc4;
+		//int numarElevi = scoala3;
+		//cout << numarElevi;
 
-		CuratareParc cp1;
-		CuratareParc cp2(15, "Banci");
-		CuratareParc cp3 = cp1;
-		CuratareParc cp4;
-		cp4 = cp2;
-		string terenuriJoaca[3]{ "Fotbal","Baschet","Tenis" };
-		cp1.setNrTerenJoaca(3, terenuriJoaca);
-		cout << cp1;
-		cout << cp2;
-		cp4.setPeroiadaCuratare(20);
-		cout << cp4<<endl;
+		//cout << endl;
+		//Scoala* v_scoala = new Scoala[3];
+		//for (int i = 0; i < 3; i++) {
+		//	cout << "Introduceti informatii pentru scoala " << i + 1 << ": " << endl;
+		//	cin >> v_scoala[i];
+		//}
+		//for (int i = 0; i < 3; i++) {
+		//	cout << "Scoala " << i + 1 << endl;
+		//	cout << v_scoala[i];
+		//}
+		//cout << endl;
+		//Cartier* cartiere = new Cartier[2];
 
-		Oras oras;
-		oras[0] = new Cartier(0, "C1", 333);
-		oras[1] = new ModernCartier(7, "Senzori pe autobuze");
-		oras[2] = new Cartier(2, "C2", 234);
-		oras[3] = new ModernCartier(11, "Magistrala noua");
-		oras[4] = new ModernCartier(12, "Statie noua autobuz");
-		for (int i = 0; i < 5; i++) {
-			oras[i]->printAbsCartier();
-		}
-		cout << endl;
+		//Sector sector1(1, "Sector 1", 2, cartiere, 500.2);
+		//sector1.getCartiere()[0].setNumeC("Cartier A");
+		//sector1.getCartiere()[1].setNumeC("Cartier B");
+		//sector1.afisare();
 
-		Park park;
-		park[0] = new Parc("P1", 3000, 1, 2);
-		park[1] = new CuratareParc(7, "Tenis");
-		park[2] = new Parc("P2", 2000,2,3);
-		park[3] = new CuratareParc(5, "Fotbal");
-		park[4] = new CuratareParc(4, "Baschet");
-		for (int i = 0; i < 5; i++) {
-			park[i]->printAbsParc();
-		}
+		//Sector sector2(sector1);
+		//cin >> sector2;
+		//cout << sector2;
+		//int suprafataC = sector2;
+		//cout << suprafataC << endl;
+		//Sector sector3(sector1);
+		//sector3.setNume("S3");
+		//cout << endl << sector3.getNume();
+		//sector3.setOras("Bucuresti");
+		//cout << endl << sector3.getOras();
+		//sector3.setSuprafata(275);
+		//cout << endl << sector3.getSuprafata();
+		//Cartier* v2 = new Cartier[3];
+		//sector3.setNrCartiere(3, v2);
+		//cout << endl;
+		//cout << sector3;
+		//cout << endl;
+
+		//ofstream f("cartier.txt", ios::out);
+		//Cartier cartier9;
+		//cin >> cartier9;
+		//f << cartier9;
+		//f.close();
+		//ifstream g("cartier.txt", ios::in);
+		//Cartier c9;
+		//g >> c9;
+		//cout << c9;
+		//g.close();
+
+
+		//string* v4 = new string[2];
+		//v4[0] = "Tenis";
+		//v4[1] = "Baschet";
+
+		//Parc parc10("Portului ", 5000, 2, 2, v4);
+		//parc10.scrieInFisierBinar("parc.bin");
+
+		//string* v3 = new string[2];
+		//v3[0] = "Chimie";
+		//v3[1] = "Biologie";
+
+		//cout << endl;
+		//Scoala scoala9("Sf. Andrei", 350, 2, 2, v3);
+		//scoala9.scrieInFisierBinar("scoala.bin");
+
+		///*ofstream f("sector.txt", ios::out);
+		//Sector sector4;
+		//cin >> sector4;
+		//f <<sector4;
+		//f.close();
+		//ifstream g("sector.txt", ios::in);
+		//Sector s4;
+		//g >> s4;
+		//cout << s4;
+		//g.close();*/
+		//ModernCartier mc1;
+		//ModernCartier mc2(20, "Semafoare");
+		//ModernCartier mc3 = mc1;
+		//ModernCartier mc4;
+		//mc4 = mc2;
+		//string blocuri[5]{ "F1","F2","F3","F4","F5" };
+		//mc1.setNrBlocuri(5, blocuri);
+		//cout << mc1;
+		//cin >> mc2;
+		//cout << mc2;
+		//mc4.setAniModernizare(10);
+		//cout << mc4;
+
+		//CuratareParc cp1;
+		//CuratareParc cp2(15, "Banci");
+		//CuratareParc cp3 = cp1;
+		//CuratareParc cp4;
+		//cp4 = cp2;
+		//string terenuriJoaca[3]{ "Fotbal","Baschet","Tenis" };
+		//cp1.setNrTerenJoaca(3, terenuriJoaca);
+		//cout << cp1;
+		//cout << cp2;
+		//cp4.setPeroiadaCuratare(20);
+		//cout << cp4<<endl;
+
+		//Oras oras;
+		//oras[0] = new Cartier(0, "C1", 333);
+		//oras[1] = new ModernCartier(7, "Senzori pe autobuze");
+		//oras[2] = new Cartier(2, "C2", 234);
+		//oras[3] = new ModernCartier(11, "Magistrala noua");
+		//oras[4] = new ModernCartier(12, "Statie noua autobuz");
+		//for (int i = 0; i < 5; i++) {
+		//	oras[i]->printAbsCartier();
+		//}
+		//cout << endl;
+
+		//Park park;
+		//park[0] = new Parc("P1", 3000, 1, 2);
+		//park[1] = new CuratareParc(7, "Tenis");
+		//park[2] = new Parc("P2", 2000,2,3);
+		//park[3] = new CuratareParc(5, "Fotbal");
+		//park[4] = new CuratareParc(4, "Baschet");
+		//for (int i = 0; i < 5; i++) {
+		//	park[i]->printAbsParc();
+		//}
 	}
